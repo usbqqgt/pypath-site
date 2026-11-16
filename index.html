@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PyPath — учись программировать на Python</title>
+  <meta name="description" content="PyPath — интерактивный путеводитель по Python: уроки, настоящая песочница прямо в браузере, викторина и шпаргалка.">
+  <meta name="theme-color" content="#0a0f1f">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐍</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap&subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <script>
+    /* Применяем тему до отрисовки, чтобы не было «вспышки» */
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var t = JSON.parse(localStorage.getItem('pypath:theme'));
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        else if (window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.dataset.theme = 'light';
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Перейти к содержимому</a>
+
+  <!-- ============ ШАПКА ============ -->
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#home" class="brand" aria-label="PyPath — на главную">
+        <span class="brand-logo">🐍</span>
+        <span class="brand-name">Py<b>Path</b></span>
+      </a>
+
+      <nav id="nav" class="nav-links" aria-label="Основное меню">
+        <a href="#why">Зачем Python</a>
+        <a href="#lessons">Уроки</a>
+        <a href="#sandbox">Песочница</a>
+        <a href="#quiz">Викторина</a>
+        <a href="#cheats">Шпаргалка</a>
+        <a href="#next">Дальше</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Переключить тему">☀️</button>
+        <button class="icon-btn burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ ГЛАВНАЯ ============ -->
+    <section id="home" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <span class="eyebrow">🏆 Проект для конкурса по Python</span>
+          <h1>Python — язык, который <span class="grad">говорит с тобой по-человечески</span></h1>
+          <p class="lead">
+            PyPath — интерактивный путеводитель для тех, кто делает первые шаги в программировании:
+            короткие уроки, настоящий Python прямо в браузере, викторина и шпаргалка. Ничего устанавливать не нужно.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#lessons">Начать путь →</a>
+            <a class="btn btn-ghost" href="#sandbox">Открыть песочницу</a>
+          </div>
+          <ul class="stats">
+            <li><b data-stat="lessons">0</b><span>уроков</span></li>
+            <li><b data-stat="quiz">0</b><span>вопросов в викторине</span></li>
+            <li><b data-stat="cheats">0</b><span>готовых примеров</span></li>
+            <li><b>∞</b><span>идей для проектов</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <div class="window">
+            <div class="window-bar"><i></i><i></i><i></i><span>hello.py</span></div>
+            <pre class="window-code" id="heroCode" aria-label="Пример кода на Python"></pre>
+            <div class="window-out">
+              <div class="out-label">▶ Вывод</div>
+              <pre id="heroOut"></pre>
+            </div>
+          </div>
+          <span class="float-badge b1">🐍 Python 3</span>
+          <span class="float-badge b2">✨ без установки</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ЗАЧЕМ PYTHON ============ -->
+    <section id="why" class="section">
+      <div class="container">
+        <header class="section-head reveal">
+          <span class="eyebrow">Зачем Python</span>
+          <h2>Один язык — тысяча возможностей</h2>
+          <p>Python любят и новички, и профессионалы. Вот где он применяется.</p>
+        </header>
+
+        <div class="cards" id="whyCards"></div>
+
+        <div class="split">
+          <article class="card fact-card reveal">
+            <h3>🎲 Случайный факт</h3>
+            <p id="factText" aria-live="polite"></p>
+            <button class="btn btn-small btn-ghost" id="factBtn" type="button">Ещё факт</button>
+          </article>
+          <article class="card zen-card reveal">
+            <h3>🧘 Дзен Python · принцип дня</h3>
+            <blockquote id="zenText"></blockquote>
+            <small id="zenDate"></small>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ УРОКИ ============ -->
+    <section id="lessons" class="section alt">
+      <div class="container">
+        <header class="section-head reveal">
+          <span class="eyebrow">Уроки</span>
+          <h2>6 шагов от print() до функций</h2>
+          <p>Читай, запускай пример одним нажатием, выполняй задание и отмечай прогресс.</p>
+        </header>
+
+        <div class="progress-card card reveal">
+          <div class="progress-info">
+            <div>
+              <strong id="progressText">0 из 6 уроков пройдено</strong>
+              <span class="rank" id="rankText"></span>
+            </div>
+            <button class="link-btn" id="resetProgress" type="button">Сбросить прогресс</button>
+          </div>
+          <div class="bar"><div class="bar-fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="lesson-layout reveal">
+          <nav class="lesson-tabs" id="lessonTabs" aria-label="Список уроков"></nav>
+          <article class="lesson card" id="lessonView" aria-live="polite"></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ПЕСОЧНИЦА ============ -->
+    <section id="sandbox" class="section">
+      <div class="container">
+        <header class="section-head reveal">
+          <span class="eyebrow">Песочница</span>
+          <h2>Запусти настоящий Python — прямо здесь</h2>
+          <p>Пиши код, жми «Запустить» или Ctrl + Enter. Если сделаешь ошибку — получишь понятную подсказку.</p>
+        </header>
+
+        <div class="sandbox card reveal">
+          <div class="sb-toolbar">
+            <label class="select-wrap">
+              <span class="sr-only">Выбери пример</span>
+              <select id="exampleSelect"></select>
+            </label>
+            <div class="sb-actions">
+              <span class="status" id="pyStatus" data-state="idle"><i></i><span>Python загрузится при первом запуске</span></span>
+              <button class="btn btn-small btn-ghost" id="copyCode" type="button">Копировать</button>
+              <button class="btn btn-small btn-ghost" id="resetCode" type="button">Сброс</button>
+              <button class="btn btn-small btn-stop" id="stopBtn" type="button" hidden>■ Стоп</button>
+              <button class="btn btn-small btn-primary" id="runBtn" type="button">▶ Запустить</button>
+            </div>
+          </div>
+
+          <div class="sb-body">
+            <div class="editor">
+              <div class="gutter" id="gutter" aria-hidden="true">1</div>
+              <textarea id="editor" spellcheck="false" wrap="off" autocomplete="off" autocapitalize="off" aria-label="Редактор кода Python"></textarea>
+            </div>
+            <div class="console">
+              <div class="console-head"><span>Вывод</span><span id="runInfo"></span></div>
+              <pre id="output" aria-live="polite"></pre>
+              <details class="stdin" id="stdinBox">
+                <summary>Ввод для input()</summary>
+                <textarea id="stdin" rows="3" spellcheck="false" placeholder="Каждая строка — ответ на один input()"></textarea>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <p class="note reveal">
+          Python работает в браузере благодаря технологии <a href="https://pyodide.org" target="_blank" rel="noopener">Pyodide</a>,
+          поэтому при первом запуске нужен интернет. Доступна стандартная библиотека; программы, идущие дольше 10 секунд, останавливаются автоматически.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ ВИКТОРИНА ============ -->
+    <section id="quiz" class="section alt">
+      <div class="container narrow">
+        <header class="section-head reveal">
+          <span class="eyebrow">Викторина</span>
+          <h2>Проверь себя</h2>
+          <p>Теория и задачи «что выведет код?». После каждого ответа — объяснение.</p>
+        </header>
+        <div class="quiz card reveal" id="quizBox"></div>
+      </div>
+    </section>
+
+    <!-- ============ ШПАРГАЛКА ============ -->
+    <section id="cheats" class="section">
+      <div class="container">
+        <header class="section-head reveal">
+          <span class="eyebrow">Шпаргалка</span>
+          <h2>Всё важное под рукой</h2>
+          <p>Ищи по слову, копируй код или запускай его в песочнице одним нажатием.</p>
+        </header>
+
+        <div class="cheat-tools reveal">
+          <input type="search" id="cheatSearch" placeholder="Поиск: например, список или цикл" aria-label="Поиск по шпаргалке">
+          <div class="chips" id="cheatChips"></div>
+        </div>
+
+        <div class="cheat-grid" id="cheatGrid"></div>
+        <p class="empty" id="cheatEmpty" hidden>Ничего не нашлось 🤔 Попробуй другое слово.</p>
+      </div>
+    </section>
+
+    <!-- ============ ЧТО ДАЛЬШЕ ============ -->
+    <section id="next" class="section alt">
+      <div class="container">
+        <header class="section-head reveal">
+          <span class="eyebrow">Что дальше</span>
+          <h2>Это только начало пути</h2>
+          <p>PyPath — часть большего проекта. Сайт — первый шаг, дальше будут игра на Python и презентация.</p>
+        </header>
+
+        <ol class="roadmap">
+          <li class="card step done reveal">
+            <span class="step-badge">Готово</span>
+            <div class="step-icon">🌐</div>
+            <h3>1. Сайт-путеводитель</h3>
+            <p>Уроки, песочница с настоящим Python, викторина и шпаргалка.</p>
+          </li>
+          <li class="card step reveal" style="--d:80ms">
+            <span class="step-badge soon">Скоро</span>
+            <div class="step-icon">🎮</div>
+            <h3>2. Игра на Python</h3>
+            <p>Небольшая игра, в которой применяются приёмы из уроков: переменные, циклы, условия и функции.</p>
+          </li>
+          <li class="card step reveal" style="--d:160ms">
+            <span class="step-badge soon">В планах</span>
+            <div class="step-icon">📊</div>
+            <h3>3. Презентация</h3>
+            <p>Короткий рассказ о проекте: идея, как всё устроено и что получилось.</p>
+          </li>
+        </ol>
+
+        <div class="idea card reveal">
+          <div class="idea-head">
+            <h3>💡 Генератор идей для твоего проекта</h3>
+            <button class="btn btn-primary btn-small" id="ideaBtn" type="button">🎲 Предложить идею</button>
+          </div>
+          <div class="idea-body" id="ideaBody" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ ПОДВАЛ ============ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="brand"><span class="brand-logo">🐍</span><span class="brand-name">Py<b>Path</b></span></div>
+        <p>Учебный проект для конкурса по Python.<br>Автор: <strong>[Имя Фамилия]</strong>, 8 класс</p>
+      </div>
+      <div class="footer-links">
+        <a href="#lessons">Уроки</a>
+        <a href="#sandbox">Песочница</a>
+        <a href="#quiz">Викторина</a>
+        <a href="#top-of-page" id="toTop">↑ Наверх</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <span id="year">2026</span> PyPath</span>
+      <span>Сделано на HTML, CSS и JavaScript · Python работает на Pyodide</span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
